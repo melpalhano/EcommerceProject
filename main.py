@@ -29,7 +29,10 @@ def create_produto(produto: ProdutoRequest):
 
 @app.get("/produto/{id}")
 def read_produto(id: int):
-    return "read produto with id {id}"
+    session = Session(bind=engine, expire_on_commit=False)
+    produto = session.query(Produto).get(id)
+    session.close()
+    return produto
 
 @app.get("/produto")
 def read_produto_list():
@@ -41,9 +44,4 @@ def update_produto(id: int):
 
 @app.delete("/produto/{id}")
 def delete_produto(id: int):
-    session = Session(bind=engine, expire_on_commit=False)
-    produto = session.query(Produto).filter(Produto.id == id).first()
-    session.delete(produto)
-    session.commit()
-    session.close()
-    # return f"delete produto item with id {id}"
+    return "delete produto item with id {id}"
