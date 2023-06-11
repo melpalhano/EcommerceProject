@@ -29,15 +29,18 @@ def test_create_produto(sample_produto):
     assert response.status_code == 200
     assert response.json()["nome"] == sample_produto[0]["nome"]
 
-def teste_detele_produto(sample_produto):
+def test_detele_produto(sample_produto):
     client = TestClient(app)
-
     response = client.post("/produto", json=sample_produto[0])
-    
     response2 = client.delete(f"/produto/{response.json()['id']}")
     assert response2.status_code == 200
 
+def test_read_produto(sample_produto):
+    client = TestClient(app)
+    response = client.post("/produto", json=sample_produto[0])
+    response2 = client.get(f"produto/{response.json()['id']}")
+    assert response2.json()['nome'] == sample_produto[0]['nome']
 
 
-
+    
 
