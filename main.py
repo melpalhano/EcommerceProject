@@ -36,7 +36,10 @@ def read_produto(id: int):
 
 @app.get("/produto")
 def read_produto_list():
-    return "read all produto"
+    session = Session(bind=engine, expire_on_commit=False)
+    produtos = session.query(Produto).all()
+    session.close()
+    return produtos
 
 @app.put("/produto/{id}")
 def update_produto(id: int):
