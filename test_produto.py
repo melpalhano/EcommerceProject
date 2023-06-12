@@ -41,9 +41,6 @@ def test_read_produto(sample_produto):
     response2 = client.get(f"produto/{response.json()['id']}")
     assert response2.json()['nome'] == sample_produto[0]['nome']
 
-
-
-
 def test_read_produto_all(sample_produto):
     client = TestClient(app)
     produtos_buscados = client.get('/produto')
@@ -54,6 +51,21 @@ def test_read_produto_all(sample_produto):
     qt_depois = len(produtos_buscados.json())
    
     assert (qt_depois - qt_antes == 5)
+
+def test_update_produto(sample_produto):
+    client = TestClient(app)
+    produto_salvo = client.post("/produto", json=sample_produto[0])
+    id_produto_salvo = produto_salvo.json()['id']
+    novo_nome = 'carro'
+    nova_quantidade = 234
+    novo_valor = 23333
+    novos_dados = {"id": id_produto_salvo, "nome": novo_nome, "quantidade": nova_quantidade, "valor": novo_valor}
+    
+    response = client.put(f'/produto', json=novos_dados)
+
+    assert response.json() == {"id": id_produto_salvo, "nome": novo_nome, "quantidade": nova_quantidade, "valor": novo_valor}
+
+
 
 
 
