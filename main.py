@@ -9,6 +9,13 @@ class ProdutoRequest(BaseModel):
     valor: int
 
 
+class ProdutoUpdateRequest(BaseModel):
+    id: int
+    nome: str
+    quantidade: int
+    valor: int
+
+
 Base.metadata.create_all(engine)
 
 app = FastAPI()
@@ -41,9 +48,17 @@ def read_produto_list():
     session.close()
     return produtos
 
-@app.put("/produto/{id}")
-def update_produto(id: int):
-    return "update produto item with id {id}"
+@app.put("/produto")
+def update_produto(novos_dados_produto: ProdutoUpdateRequest):
+    session = Session(bind=engine, expire_on_commit=False)
+    produto = session.query(Produto).get(novos_dados_produto.id)
+    produto.nome = novos_dados_produto.nome
+    produto.quantidade = novos_dados_produto.quantidade
+    produto.valor = novos_dados_produto.valor
+    session.commit()
+    session.close()
+    return produto
+
 
 @app.delete("/produto/{id}")
 def delete_produto(id: int):
