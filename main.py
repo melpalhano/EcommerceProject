@@ -59,7 +59,11 @@ def update_produto(novos_dados_produto: ProdutoUpdateRequest):
     session.close()
     return produto
 
-
 @app.delete("/produto/{id}")
 def delete_produto(id: int):
-    return "delete produto item with id {id}"
+    session = Session(bind=engine, expire_on_commit=False)
+    produto = session.query(Produto).filter(Produto.id == id).first()
+    session.delete(produto)
+    session.commit()
+    session.close()
+    #return "delete produto item with id {id}"
