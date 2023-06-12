@@ -63,6 +63,9 @@ def update_produto(novos_dados_produto: ProdutoUpdateRequest):
 def delete_produto(id: int):
     session = Session(bind=engine, expire_on_commit=False)
     produto = session.query(Produto).filter(Produto.id == id).first()
+    if(produto.quantidade > 0):
+        return -1
+    
     session.delete(produto)
     session.commit()
     session.close()
