@@ -15,6 +15,7 @@ It was developed with the following technologies:
 - [Pytest](https://docs.pytest.org/en/7.3.x/getting-started.html#get-started)
 - [FastAPI](https://fastapi.tiangolo.com/tutorial/)
 - [SQLite](https://www.sqlite.org/index.html)
+- [SQLAlchemy](https://www.sqlalchemy.org)
 
 ### ⚙️ Environment Configuration
 
@@ -32,8 +33,8 @@ $ pip install SQLalchemy
 $ pip instal httpx
 
 # Application Execution
-$ pip install union uvicorn main:app --reload
-$ pytest test_produto.py
+$ uvicorn main:app --reload
+$ pytest 
 
 ```
 
