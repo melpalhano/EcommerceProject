@@ -52,12 +52,17 @@ def read_produto_list():
 def update_produto(novos_dados_produto: ProdutoUpdateRequest):
     session = Session(bind=engine, expire_on_commit=False)
     produto = session.query(Produto).get(novos_dados_produto.id)
-    produto.nome = novos_dados_produto.nome
-    produto.quantidade = novos_dados_produto.quantidade
-    produto.valor = novos_dados_produto.valor
-    session.commit()
-    session.close()
-    return produto
+
+    if produto is not None:
+        produto.nome = novos_dados_produto.nome
+        produto.quantidade = novos_dados_produto.quantidade
+        produto.valor = novos_dados_produto.valor
+        session.commit()
+        session.close()
+        return produto
+    else:
+        session.close()
+        return 'Produto não encontrado!'
 
 @app.delete("/produto/{id}")
 def delete_produto(id: int):
