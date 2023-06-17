@@ -3,6 +3,10 @@ from database import Base, engine, Produto
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from fastapi import FastAPI, Request
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
+
 class ProdutoRequest(BaseModel):
     nome: str
     quantidade: int
@@ -19,10 +23,12 @@ class ProdutoUpdateRequest(BaseModel):
 Base.metadata.create_all(engine)
 
 app = FastAPI()
+templates = Jinja2Templates(directory="templates")
 
-@app.get("/")
-def root():
-    return "produto"
+@app.get("/", response_class=HTMLResponse)
+def root(request: Request):
+    dados = {'pagina': 'Home'}
+    return templates.TemplateResponse("index.html", {"request": request, 'dados':dados})
 
 @app.post("/produto")
 def create_produto(produto: ProdutoRequest):
