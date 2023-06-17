@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--<link rel="stylesheet" type="text/css" href="static/style.css">-->
+    <title>EcommerceProject</title>
+</head>
+<body onload="load_products()">
+    <header>
+        <h1>Ecommerce</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Cadastre um novo Produto</h2>
+            <form id="formNewProduct">
+                <input type="text" id='nome' name="nome" placeholder="Nome do produto*" required>
+                <input type="text" id='quantidade' nome="quantidade" placeholder="Quandidade em estoque*" required>
+                <input type="text" id='valor' nome="valor" placeholder="Valor do produto*" required>
+                <button type="submit">Cadastrar</button>
+            </form>
+        </section>
+        <hr>
+        <section>
+            <h2>Nossos Produtos</h2>
+            <ul id="Product_list"></ul>
+        </section>
+    </main>
+
+    <script>
+        const urlAtual = window.location.href;
+        const products_list = document.getElementById('Product_list');
+
+        let formNewProduct = document.getElementById('formNewProduct')
+        formNewProduct.addEventListener('submit', registerProduct)
+
+        function registerProduct(event) {
+            event.preventDefault(); // Evita o comportamento padrão de envio do formulário
+            
+            // Obtém os valores dos campos de entrada
+            const nome = document.getElementById('nome')
+            const quantidade = document.getElementById('quantidade')
+            const valor = document.getElementById('valor')
+            const nomeValue = nome.value;
+            const quantidadeValue = quantidade.value;
+            const valorValue = valor.value;
+            
+            
+            const newProduct = {
+                nome: nomeValue,
+                quantidade: parseInt(quantidadeValue),
+                valor: parseFloat(valorValue)
+            }
+            fetch(urlAtual+'produto', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newProduct)
+            })
+            .then(response => response.json())
+            .then(result => {
+                products_list.innerHTML = ''
+                load_products()
+                nome.value = ''
+                quantidade.value = ''
+                valor.value = ''
+            })
+            .catch(error => {
+                console.log('error: Ocorreu um erro:', error);
+            });
+
+
+            
+        }
+        
+        function load_products() {
+            fetch(urlAtual+'produto')
+                .then(response => response.json())
+                .then(products => {
+                    console.log(products)
+
+                    
+                    if (products.length === 0) {
+                        
+                        products_list.textContent = 'Sem produtos cadastrados...'
+                    } else {
+                        for (let i = 0; i < products.length; i++) {
+                        const name_product = document.createElement('h3')
+                        const value_product = document.createElement('p')
+                        const quantity_product = document.createElement('p')
+                        const btn_delete = document.createElement('button')
+
+                        name_product.textContent = products[i].nome
+                        value_product.textContent = 'Valor: R$'+products[i].valor.toString()
+                        quantity_product.textContent = 'Quantidade: '+products[i].quantidade.toString()+' Unidades'
+                        btn_delete.textContent = 'Deletar'
+                        
+                        const product = document.createElement('li');
+                        product.appendChild(name_product)
+                        product.appendChild(value_product)
+                        product.appendChild(quantity_product)
+                        product.appendChild(btn_delete)
+
+                        products_list.appendChild(product);
+                    }
+                    }
+                    
+                    
+                 })
+                .catch(error => {
+                    // Trate o erro, se ocorrer algum
+                    console.error('Ocorreu um erro:', error);
+            });
+        }
+    </script>
+</body>
+</html>
